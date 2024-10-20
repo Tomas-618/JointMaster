@@ -10,10 +10,12 @@ namespace Pools
     {
         private readonly ObjectPool<Projectile> _pool;
         private readonly ProjectileFactory _factory;
-        private readonly Transform _parent;
 
         public ProjectilePool(ProjectileFactory factory, Transform parent, int capacity, int maxSize)
         {
+            if (parent == null)
+                throw new ArgumentNullException(nameof(parent));
+
             if (capacity <= 0)
                 throw new ArgumentOutOfRangeException(capacity.ToString());
 
@@ -21,11 +23,10 @@ namespace Pools
                 throw new ArgumentOutOfRangeException(maxSize.ToString());
 
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
-            _parent = parent;
 
             _pool = new ObjectPool<Projectile>(
-                () => _factory.Create(this),
-                OnGet,
+                () => _factory.Create(this, parent),
+                projectile => { },
                 projectile => projectile.DisableObject(),
                 projectile => projectile.Destroy(),
                 true,
@@ -33,16 +34,17 @@ namespace Pools
                 maxSize);
         }
 
-        public Projectile Get() =>
-            _pool.Get();
+        public Projectile Get(Vector3 spawnPosition)
+        {
+            Projectile projectile = _pool.Get();
+            
+            projectile.SetPosition(spawnPosition);
+            projectile.EnableObject();
+
+            return projectile;
+        }
 
         public void Release(Projectile projectile) =>
             _pool.Release(projectile);
-
-        private void OnGet(Projectile projectile)
-        {
-            projectile.EnableObject();
-            projectile.SetPosition(_parent.position);
-        }
     }
 }

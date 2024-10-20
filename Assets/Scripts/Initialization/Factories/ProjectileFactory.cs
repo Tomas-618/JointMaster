@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using Pools.Interfaces;
 
 namespace Factories
@@ -7,20 +8,21 @@ namespace Factories
     {
         private readonly Mesh[] _meshes;
         private readonly Projectile _prefab;
-        private readonly Transform _parent;
 
-        public ProjectileFactory(Mesh[] meshes, Projectile prefab, Transform parent)
+        public ProjectileFactory(Mesh[] meshes, Projectile prefab)
         {
-            _meshes = meshes ?? throw new System.ArgumentNullException(nameof(meshes));
-            _prefab = prefab != null ? prefab : throw new System.ArgumentNullException(nameof(prefab));
-            _parent = parent != null ? parent : throw new System.ArgumentNullException(nameof(parent));
+            _meshes = meshes ?? throw new ArgumentNullException(nameof(meshes));
+            _prefab = prefab != null ? prefab : throw new ArgumentNullException(nameof(prefab));
         }
 
-        public Projectile Create(IPoolReleaser<Projectile> pool)
+        public Projectile Create(IPoolReleaser<Projectile> pool, Transform parent)
         {
-            int randomMeshIndex = Random.Range(0, _meshes.Length);
+            if (parent == null)
+                throw new ArgumentNullException(nameof(parent));
 
-            Projectile projectile = Object.Instantiate(_prefab, _parent);
+            int randomMeshIndex = UnityEngine.Random.Range(0, _meshes.Length);
+
+            Projectile projectile = UnityEngine.Object.Instantiate(_prefab, parent);
 
             Mesh mesh = _meshes[randomMeshIndex];
 

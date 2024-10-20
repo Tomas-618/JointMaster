@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95151ab9e9f5fd742a6150cd4dcf439f, type: 3}
+  m_Name: CatapultValuesConfig
+  m_EditorClassIdentifier: 
+  _anchorOnIdlePosition: {x: 0, y: 2.9, z: 3.3}
+  _anchorOnActivatedPosition: {x: 0, y: 0.6, z: 5.61}
+  _onIdleRotationX: 77
+  _onActivatedRotationX: 62

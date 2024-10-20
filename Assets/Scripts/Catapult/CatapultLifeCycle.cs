@@ -1,13 +1,11 @@
-using System;
+﻿using System;
 using UnityEngine;
+using Utils.BasicStateMachine;
 using Services;
 
-public class Swing : MonoBehaviour
+public class CatapultLifeCycle : MonoBehaviour
 {
-    [SerializeField, Min(0)] private float _pushingForce;
-
-    [SerializeField] private Rigidbody _rigidbody;
-
+    private StateMachine _stateMachine;
     private UpdateService _updateService;
 
     private void OnEnable() =>
@@ -16,29 +14,24 @@ public class Swing : MonoBehaviour
     private void OnDisable() =>
         RemoveListenerOnUpdateServiceEvents();
 
-    public void Init(UpdateService updateService)
+    public void Init(StateMachine stateMachine, UpdateService updateService)
     {
+        _stateMachine = stateMachine ?? throw new ArgumentNullException(nameof(stateMachine));
         _updateService = updateService ?? throw new ArgumentNullException(nameof(updateService));
 
         RemoveListenerOnUpdateServiceEvents();
         AddListenerOnUpdateServiceEvents();
     }
 
-    private void OnUpdate() =>
-        Push();
-
-    private void Push()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-            _rigidbody.AddRelativeForce(Vector3.forward * _pushingForce);
-    }
+    private void OnUpdated() =>
+        _stateMachine.Update();
 
     private void AddListenerOnUpdateServiceEvents()
     {
         if (_updateService == null)
             return;
 
-        _updateService.Updated += OnUpdate;
+        _updateService.Updated += OnUpdated;
     }
 
     private void RemoveListenerOnUpdateServiceEvents()
@@ -46,6 +39,6 @@ public class Swing : MonoBehaviour
         if (_updateService == null)
             return;
 
-        _updateService.Updated -= OnUpdate;
+        _updateService.Updated -= OnUpdated;
     }
 }
